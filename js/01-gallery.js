@@ -23,12 +23,13 @@ function createGalleryItemsMarkup(arr) {
 
 picturesBox.addEventListener('click', createModal);
 
-const modalEl = basicLightbox.create(`<img class="basicLightbox__picture">`);
+const modalEl = basicLightbox.create(`<img class="basicLightbox__picture">`, { onShow: () => { addEventListener("keydown", closeModalToKeydown), addEventListener("click", closeModalToClick) }, onClose: () => { removeEventListener("keydown", closeModalToKeydown), removeEventListener("click", closeModalToClick)} });
 
 function createModal(event) {
     event.preventDefault();
     event.stopPropagation();
-   if(!event.target.classList.contains('gallery__image')) {
+    
+   if(event.target.nodeName !== 'IMG') {
        return;
     };
     const pictureLink = event.target.parentNode;
@@ -36,22 +37,15 @@ function createModal(event) {
 
     imageEl.src = pictureLink;
     modalEl.show();
-    document.addEventListener("keydown", closeModal);
-    document.addEventListener("click", closeModalToClick);
 };
 
-function closeModal(event) {
+function closeModalToKeydown(event) {
     if (event.code !== "Escape") {
     return;
     } 
     modalEl.close();
-    document.removeEventListener("keydown", closeModal);
 };
 
-function closeModalToClick(event) {
-    if (event.target.classList.contains('basicLightbox__picture')) {
-        return;
-    }
+function closeModalToClick() {
     modalEl.close();
-    document.removeEventListener("click", closeModalToClick);
-}
+};
